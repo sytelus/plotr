@@ -8,16 +8,16 @@ from .. import utils
 
 
 class BasePlotlyPlot(VisBase):
-    def __init__(self, cell:VisBase.widgets.Box=None, title=None, show_legend:bool=None, is_3d:bool=False, 
-                 stream_name:str=None, console_debug:bool=False, **vis_args):
+    def __init__(self, cell:VisBase.widgets.Box=None, title=None, show_legend:bool=None, is_3d:bool=False,
+                 **vis_args):
         import plotly.graph_objs as go # function-level import as this takes long time
-        super(BasePlotlyPlot, self).__init__(go.FigureWidget(), cell, title, show_legend, 
-                                             stream_name=stream_name, console_debug=console_debug, **vis_args)
+        super(BasePlotlyPlot, self).__init__(go.FigureWidget(), cell, title, show_legend,
+                                             **vis_args)
 
         self.is_3d = is_3d
         self.widget.layout.title = title
         self.widget.layout.showlegend = show_legend if show_legend is not None else True
-      
+
     def _add_trace(self, stream_vis):
         stream_vis.trace_index = len(self.widget.data)
         trace = self._create_trace(stream_vis)
@@ -45,7 +45,7 @@ class BasePlotlyPlot(VisBase):
             max_opacity = stream_vis.opacity or 1
             min_alpha, max_alpha, dimmed_len = max_opacity*0.05, max_opacity*0.8, cur_history_len-1
             alphas = list(utils.frange(max_alpha, min_alpha, steps=dimmed_len))
-            for i, thi in enumerate(range(stream_vis.cur_history_index+1, 
+            for i, thi in enumerate(range(stream_vis.cur_history_index+1,
                                           stream_vis.cur_history_index+cur_history_len)):
                 trace_index = stream_vis.trace_history[thi % cur_history_len]
                 self.widget.data[trace_index].opacity = alphas[i]
@@ -57,7 +57,7 @@ class BasePlotlyPlot(VisBase):
 
     @staticmethod
     def _get_axis_common_props(title:str, axis_range:tuple):
-        props = {'showline':True, 'showgrid': True, 
+        props = {'showline':True, 'showgrid': True,
                        'showticklabels': True, 'ticks':'inside'}
         if title:
             props['title'] = title
@@ -78,7 +78,7 @@ class BasePlotlyPlot(VisBase):
         # TODO: better way for below?
         if stream_vis.history_len > 1:
             self.widget.layout.showlegend = False
-                
+
     def _show_widget_native(self, blocking:bool):
         pass
         #TODO: save image, spawn browser?
